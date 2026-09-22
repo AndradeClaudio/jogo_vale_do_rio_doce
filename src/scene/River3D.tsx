@@ -168,20 +168,20 @@ function ConcaveLake({ x, z, radius, depth }: { x: number; z: number; radius: nu
     <group position={[x, 0, z]}>
       {/* Leito arenoso côncavo */}
       <mesh geometry={bowlGeometry} receiveShadow>
-        <meshStandardMaterial color="#b45309" roughness={0.85} />
+        <meshStandardMaterial color="#574438" roughness={0.9} />
       </mesh>
 
       {/* Espelho d'água azul royal forte e vibrante */}
       <mesh position={[0, -0.12, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[radius * 0.96, 36]} />
         <meshStandardMaterial
-          color="#1d4ed8"
-          emissive="#1e3a8a"
-          emissiveIntensity={0.4}
-          roughness={0.05}
-          metalness={0.15}
+          color="#0a192f"
+          emissive="#040d1a"
+          emissiveIntensity={0.25}
+          roughness={0.04}
+          metalness={0.2}
           transparent
-          opacity={0.94}
+          opacity={0.97}
         />
       </mesh>
     </group>
@@ -249,20 +249,20 @@ export function River3D() {
     <group>
       {/* 1. Leito do Rio Côncavo (curvado para dentro do terreno) */}
       <mesh geometry={riverBedGeometry} receiveShadow>
-        <meshStandardMaterial color="#b45309" roughness={0.85} />
+        <meshStandardMaterial color="#574438" roughness={0.9} />
       </mesh>
 
       {/* 2. Água com Azul Royal Mais Forte e Marcante */}
       <mesh geometry={waterGeometry}>
         <meshStandardMaterial
           ref={waterMaterialRef}
-          color="#1d4ed8" // Azul mais forte e marcante (Royal Blue)
-          emissive="#1e3a8a" // Emissividade azul profunda
-          emissiveIntensity={0.38}
+          color="#0a192f" // Azul muito escuro (Dark Navy / Midnight Blue)
+          emissive="#040d1a" // Emissividade sutil azul muito escura
+          emissiveIntensity={0.25}
           roughness={0.04}
-          metalness={0.18}
+          metalness={0.2}
           transparent
-          opacity={0.94}
+          opacity={0.97}
         />
       </mesh>
 

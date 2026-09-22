@@ -24,7 +24,7 @@ Este documento rastreia a evolução das entregas do projeto **Expedição Rio D
   - Resolução de respostas: penalidade de rachadura ou reparo/evolução do barco
   - Simulação completa de partidas e validação matemática de vitória/derrota (`src/engine/__tests__/gameFlow.test.ts`)
 
-- [ ] **#4 feat(scene): 3D River Environment, Water Shader & Evolving Boat Meshes with Damage VFX**
+- [x] **#4 feat(scene): 3D River Environment, Water Shader & Evolving Boat Meshes with Damage VFX**
   - Trilha fluvial tridimensional com `CatmullRomCurve3` e shader de correnteza do rio (`src/scene/River3D.tsx`)
   - Malhas procedurais low-poly dos 4 tiers de barco (`src/scene/BoatMeshes.tsx`)
   - Representação visual 3D das rachaduras no casco e partículas de água (`src/scene/DamageVFX.tsx`)

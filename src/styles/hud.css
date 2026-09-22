@@ -171,6 +171,58 @@
   color: var(--color-texto-secundario);
 }
 
+/* Banner Interativo de Alerta de Lixo */
+.waste-interactive-banner {
+  pointer-events: auto;
+  background: linear-gradient(135deg, #f59e0b, #ea580c);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 1.6rem;
+  border-radius: 999px;
+  box-shadow: 0 8px 25px rgba(234, 88, 12, 0.45);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  animation: pulse-banner 1s infinite alternate;
+}
+
+@keyframes pulse-banner {
+  from { transform: scale(0.98); }
+  to { transform: scale(1.02); }
+}
+
+/* Botão 3D Flutuante de Toque para Coletar Lixo */
+.btn-tap-clean-3d {
+  background: linear-gradient(135deg, #16a34a, #0d9488);
+  color: #ffffff;
+  font-family: var(--fonte-principal);
+  font-size: 0.95rem;
+  font-weight: 800;
+  padding: 0.65rem 1.3rem;
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(22, 163, 74, 0.7);
+  border: 2px solid #ffffff;
+  white-space: nowrap;
+  cursor: pointer;
+  animation: bounce-tap 0.9s infinite alternate ease-in-out;
+  user-select: none;
+}
+
+.btn-tap-clean-3d:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 30px rgba(22, 163, 74, 0.9);
+}
+
+@keyframes bounce-tap {
+  from {
+    transform: translateY(0) scale(0.96);
+  }
+  to {
+    transform: translateY(-8px) scale(1.04);
+  }
+}
+
 /* Rodapé com Botão de Navegação */
 .hud-bottom {
   display: flex;

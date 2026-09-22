@@ -6,7 +6,7 @@ Este documento rastreia a evolução das entregas do projeto **Expedição Rio D
 
 ## Backlog de Implementação
 
-- [ ] **#1 feat(engine): Domain Models, Boat Hull Integrity & Evolution System**
+- [x] **#1 feat(engine): Domain Models, Boat Hull Integrity & Evolution System**
   - Definição dos tipos de domínio (`src/engine/types.ts`)
   - Mecânica de integridade do casco (0 a 4 rachaduras) e regras de naufrágio (`src/engine/boat.ts`)
   - Progressão de níveis do barco (Canoa -> Bote -> Barco Regional -> Cruzeiro Sustentável)

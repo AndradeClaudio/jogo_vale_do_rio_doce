@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+
 
 const TREES_COORDS: [number, number][] = [
   [-22, 16], [-20, 8], [-16, 17], [-12, 16], [-10, 8], [-6, 15],

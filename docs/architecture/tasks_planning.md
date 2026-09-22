@@ -31,7 +31,7 @@ Este documento rastreia a evolução das entregas do projeto **Expedição Rio D
   - Posicionamento 3D de dejetos coletáveis e personagens ribeirinhos (`src/scene/WasteTokens.tsx`, `src/scene/CharacterTokens.tsx`)
   - Câmera orbital e cinematográfica de navegação (`src/scene/CameraRig.tsx`)
 
-- [ ] **#5 feat(ui): Responsive HUD, Dialog Modals, Hull Integrity & Styling System**
+- [x] **#5 feat(ui): Responsive HUD, Dialog Modals, Hull Integrity & Styling System**
   - Arquitetura de estilos Vanilla CSS centralizada em `src/styles/` (`tokens.css`, `hud.css`, `modals.css`)
   - HUD com medidor visual das 4 rachaduras do barco, nível de embarcação e lixo retirado (`src/ui/HUD.tsx`)
   - Modais interativos de diálogo e perguntas pedagógicas (`src/ui/QuizModal.tsx`)

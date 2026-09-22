@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { MAX_CRACKS } from '../boat';
 import { createInitialState, gameReducer } from '../reducer';
-import type { GameState } from '../types';
+
 
 describe('Game Reducer & Event Flow', () => {
   it('inicializa e transiciona para navegando ao iniciar o jogo', () => {

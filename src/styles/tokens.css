@@ -1,0 +1,38 @@
+/* Paleta de Cores e Tokens de Design — Expedição Rio Doce */
+:root {
+  /* Tons fluviais e naturais de Minas Gerais */
+  --color-rio-azul: #0284c7;
+  --color-rio-esmeralda: #0d9488;
+  --color-rio-profundo: #0f766e;
+  --color-mata-verde: #16a34a;
+  --color-mata-escura: #15803d;
+  --color-terra-marrom: #78350f;
+  --color-ouro-minas: #f59e0b;
+  --color-amarelo-claro: #fef08a;
+
+  /* Estados de Integridade do Casco e Dano */
+  --color-dano-critico: #dc2626;
+  --color-dano-alerta: #ea580c;
+  --color-dano-fundo: rgba(254, 226, 226, 0.95);
+  --color-sucesso-verde: #16a34a;
+  --color-sucesso-fundo: rgba(220, 252, 231, 0.95);
+
+  /* Superfícies e Tipografia */
+  --color-fundo-overlay: rgba(15, 23, 42, 0.65);
+  --color-painel-bg: rgba(255, 255, 255, 0.94);
+  --color-painel-borda: rgba(15, 23, 42, 0.14);
+  --color-texto-principal: #0f172a;
+  --color-texto-secundario: #475569;
+  --color-texto-claro: #f8fafc;
+
+  /* Dimensões e Efeitos */
+  --sombra-card: 0 10px 25px -5px rgba(15, 23, 42, 0.18), 0 8px 10px -6px rgba(15, 23, 42, 0.12);
+  --sombra-modal: 0 25px 50px -12px rgba(15, 23, 42, 0.35);
+  --raio-borda-grande: 20px;
+  --raio-borda-medio: 14px;
+  --raio-borda-pequeno: 8px;
+
+  /* Fontes */
+  --fonte-principal: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  --transicao-suave: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}

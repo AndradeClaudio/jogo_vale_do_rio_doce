@@ -18,7 +18,7 @@ Este documento rastreia a evolução das entregas do projeto **Expedição Rio D
   - Topologia do percurso do Rio Doce e marcos fluviais (`src/data/riverLayout.ts`)
   - Testes de integridade dos dados (`src/engine/__tests__/data.test.ts`)
 
-- [ ] **#3 feat(engine): Game Reducer, Waste Cleaning Mechanics & Game Flow**
+- [x] **#3 feat(engine): Game Reducer, Waste Cleaning Mechanics & Game Flow**
   - Reducer imutável de transições de fase (`src/engine/reducer.ts`)
   - Lógica de limpeza de dejetos no rio e ganho de pontuação ecológica (`src/engine/waste.ts`)
   - Resolução de respostas: penalidade de rachadura ou reparo/evolução do barco

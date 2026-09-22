@@ -1,0 +1,167 @@
+direction: right
+
+title: "Arquitetura do Sistema — Expedição Rio Doce 3D" {
+  near: top-center
+  shape: text
+  style.font-size: 24
+}
+
+domain_layer: "Camada de Domínio (Pure TS / src/engine)" {
+  tooltip: "Contém as entidades, regras de negócio puras e invariantes do jogo, sem dependências externas."
+
+  boat_state: {
+    shape: class
+    tooltip: "Modela o estado físico, integridade do casco e nível evolutivo da embarcação."
+    cracks_count: int
+    tier: BoatTier
+    is_sunk: boolean
+    experience_points: int
+  }
+
+  boat_hull_service: {
+    shape: class
+    tooltip: "Controla as regras de integridade do casco, danos por erro, reparos e evolução de embarcação."
+    apply_damage(current: boat_state): boat_state
+    repair_crack(current: boat_state): boat_state
+    upgrade_tier(current: boat_state): boat_state
+    check_sinking(cracks: int): boolean
+  }
+
+  waste_service: {
+    shape: class
+    tooltip: "Responsável pelo gerenciamento de dejetos no rio e pontuação de sustentabilidade ambiental."
+    spawn_waste(river_position: float): WasteDebris
+    collect_waste(debris_id: string): CleanupResult
+  }
+
+  quiz_service: {
+    shape: class
+    tooltip: "Valida respostas às questões pedagógicas e calcula o impacto no barco (dano ou reparo/evolução)."
+    validate_answer(question_id: string, choice_index: int): QuizResult
+    get_explanation(question_id: string): string
+  }
+
+  game_reducer: {
+    shape: class
+    tooltip: "Reducer puro que orquestra as transições de fase e mutações imutáveis do estado do jogo."
+    reduce(state: GameState, action: GameAction): GameState
+    create_initial_state(): GameState
+  }
+}
+
+data_layer: "Camada de Dados (src/data)" {
+  tooltip: "Coleções estáticas tipadas com os conteúdos pedagógicos, personagens e percurso fluvial."
+
+  rio_doce_questions: {
+    shape: class
+    tooltip: "Catálogo contendo as 10 questões pedagógicas históricas e geográficas sobre o Rio Doce."
+    get_questions(): Array<QuizQuestion>
+    get_by_id(id: string): QuizQuestion
+  }
+
+  character_registry: {
+    shape: class
+    tooltip: "Registra os personagens ribeirinhos da bacia (agricultor, pescador, artesão Krenak, guia)."
+    get_characters(): Array<CharacterProfile>
+  }
+
+  river_waypoints: {
+    shape: class
+    tooltip: "Define a topologia do Rio Doce com atracadouros, trechos de dejetos e marcos geográficos."
+    get_curve_points(): Array<Vector3>
+  }
+}
+
+store_layer: "Camada de Aplicação e Estado (src/store)" {
+  tooltip: "Gerenciamento de estado global reativo integrando o motor puro à interface e cena."
+
+  game_store: {
+    shape: class
+    tooltip: "Store Zustand com middleware de seletores para orquestração de ações e assinaturas."
+    get_state(): GameState
+    dispatch(action: GameAction): void
+    subscribe(listener: Function): Function
+  }
+}
+
+scene_layer: "Camada de Apresentação 3D (Three.js / R3F / src/scene)" {
+  tooltip: "Renderização do mundo tridimensional, malhas fluviais, efeitos visuais e controle temporal."
+
+  river_renderer: {
+    shape: class
+    tooltip: "Renderiza a superfície da água corrente do Rio Doce e relevos das margens mineiras."
+    render_water_mesh(): void
+  }
+
+  boat_renderer: {
+    shape: class
+    tooltip: "Renderiza dinamicamente o modelo 3D do barco de acordo com o tier e exibe rachaduras visuais."
+    update_mesh(tier: BoatTier, cracks: int): void
+    animate_navigation(from_pos: float, to_pos: float): void
+  }
+
+  waste_renderer: {
+    shape: class
+    tooltip: "Renderiza os dejetos flutuantes no leito do rio prontos para recolhimento."
+    render_debris(debris: Array<WasteDebris>): void
+  }
+
+  character_renderer: {
+    shape: class
+    tooltip: "Renderiza os personagens nos pontos de parada ao longo das margens."
+    render_characters(): void
+  }
+
+  camera_rig: {
+    shape: class
+    tooltip: "Gerencia a câmera orbital e de perseguição dinâmica ao barco pelo leito do rio."
+    update_camera(boat_position: Vector3): void
+  }
+}
+
+ui_layer: "Camada de Apresentação 2D (Vanilla CSS / src/ui)" {
+  tooltip: "Interface HUD e componentes modais 2D estilizados com CSS puro centralizado."
+
+  hud_component: {
+    shape: class
+    tooltip: "Painel com medidor visual das 4 rachaduras, nível atual do barco e contador de dejetos."
+    render_indicators(): void
+  }
+
+  quiz_modal: {
+    shape: class
+    tooltip: "Modal de diálogo interativo com personagens ribeirinhos e alternativas de múltipla escolha."
+    render_dialog(question: QuizQuestion): void
+  }
+
+  waste_modal: {
+    shape: class
+    tooltip: "Modal de confirmação e conscientização sobre os dejetos retirados das águas do Rio Doce."
+    render_cleanup_action(): void
+  }
+
+  game_over_screen: {
+    shape: class
+    tooltip: "Tela de encerramento exibindo vitória ambiental ou naufrágio após 4 rachaduras."
+    render_result(is_victory: boolean): void
+  }
+}
+
+# Relações e Fluxos de Dependência
+data_layer.rio_doce_questions -> domain_layer.quiz_service: "fornece questões"
+data_layer.character_registry -> domain_layer.game_reducer: "alimenta encontros"
+data_layer.river_waypoints -> scene_layer.river_renderer: "define geometria do rio"
+
+domain_layer.boat_hull_service -> domain_layer.boat_state: "modifica integridade"
+domain_layer.game_reducer -> domain_layer.boat_hull_service: "invoca regras de casco"
+domain_layer.game_reducer -> domain_layer.waste_service: "processa despoluição"
+domain_layer.game_reducer -> domain_layer.quiz_service: "avalia respostas"
+
+store_layer.game_store -> domain_layer.game_reducer: "executa dispatch"
+
+scene_layer.boat_renderer -> store_layer.game_store: "notifica MOVE_ANIMATION_DONE"
+scene_layer.boat_renderer -> scene_layer.camera_rig: "informa coordenadas 3D"
+
+ui_layer.quiz_modal -> store_layer.game_store: "despacha ANSWER_QUIZ"
+ui_layer.waste_modal -> store_layer.game_store: "despacha COLLECT_WASTE"
+ui_layer.hud_component -> store_layer.game_store: "consome estado reativo"

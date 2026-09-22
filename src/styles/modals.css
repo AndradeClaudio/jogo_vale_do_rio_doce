@@ -1,0 +1,230 @@
+@import './tokens.css';
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-fundo-overlay);
+  backdrop-filter: blur(8px);
+  padding: 1.5rem;
+  z-index: 50;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-window {
+  width: 100%;
+  max-width: 580px;
+  background: #ffffff;
+  border-radius: var(--raio-borda-grande);
+  box-shadow: var(--sombra-modal);
+  padding: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid var(--color-painel-borda);
+}
+
+/* Cabeçalho do Personagem */
+.character-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1.5px solid rgba(15, 23, 42, 0.08);
+}
+
+.character-avatar {
+  font-size: 2.8rem;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(2, 132, 199, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.character-info h3 {
+  font-size: 1.25rem;
+  color: var(--color-texto-principal);
+}
+
+.character-info p {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-rio-profundo);
+}
+
+.character-intro {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--color-texto-secundario);
+  font-style: italic;
+  background: rgba(248, 250, 252, 0.8);
+  padding: 0.8rem;
+  border-radius: var(--raio-borda-pequeno);
+  border-left: 3px solid var(--color-rio-azul);
+}
+
+/* Bloco da Pergunta */
+.quiz-question-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.quiz-question-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-texto-principal);
+  line-height: 1.4;
+}
+
+.quiz-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.choice-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: #ffffff;
+  border: 2px solid rgba(15, 23, 42, 0.12);
+  border-radius: var(--raio-borda-medio);
+  padding: 0.85rem 1.1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-texto-principal);
+  text-align: left;
+  transition: var(--transicao-suave);
+}
+
+.choice-btn:hover:not(:disabled) {
+  border-color: var(--color-rio-azul);
+  background: rgba(2, 132, 199, 0.04);
+  transform: translateX(4px);
+}
+
+.choice-btn.correct {
+  background: var(--color-sucesso-fundo);
+  border-color: var(--color-sucesso-verde);
+  color: var(--color-mata-escura);
+}
+
+.choice-btn.wrong {
+  background: var(--color-dano-fundo);
+  border-color: var(--color-dano-critico);
+  color: #991b1b;
+}
+
+.choice-letter {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Feedback e Explicação Pedagógica */
+.feedback-box {
+  padding: 1rem;
+  border-radius: var(--raio-borda-medio);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  animation: fadeIn 0.3s ease;
+}
+
+.feedback-box.correct {
+  background: var(--color-sucesso-fundo);
+  border: 1px solid var(--color-sucesso-verde);
+  color: var(--color-mata-escura);
+}
+
+.feedback-box.wrong {
+  background: var(--color-dano-fundo);
+  border: 1px solid var(--color-dano-critico);
+  color: #991b1b;
+}
+
+.feedback-upgrade-highlight {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* Modal de Limpeza de Dejetos */
+.waste-modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.waste-icon-large {
+  font-size: 3.5rem;
+  background: rgba(239, 68, 68, 0.1);
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-clean {
+  background: linear-gradient(135deg, var(--color-mata-verde), var(--color-rio-esmeralda));
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 0.85rem 2rem;
+  border-radius: var(--raio-borda-grande);
+  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.35);
+}
+
+.btn-clean:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(22, 163, 74, 0.5);
+}
+
+/* Telas Finais: Naufrágio e Vitória */
+.endgame-window {
+  text-align: center;
+  align-items: center;
+}
+
+.endgame-icon {
+  font-size: 4rem;
+}
+
+.btn-restart {
+  background: linear-gradient(135deg, var(--color-rio-azul), var(--color-rio-profundo));
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 0.9rem 2.2rem;
+  border-radius: var(--raio-borda-grande);
+  box-shadow: var(--sombra-card);
+}
+
+.btn-restart:hover {
+  transform: translateY(-2px);
+}

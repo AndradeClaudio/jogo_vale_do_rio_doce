@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { MAX_WAYPOINT_INDEX } from '../../data/riverLayout';
 import { createInitialState, gameReducer } from '../reducer';
 import { calculateScoreSummary } from '../scoring';
-import type { GameState } from '../types';
+
 
 describe('End-to-End Game Flow Simulation', () => {
   it('completa uma partida com 100% de acertos, alcançando Foz e Cruzeiro Fluvial', () => {

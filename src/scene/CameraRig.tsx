@@ -10,14 +10,26 @@ const tmpTarget = new THREE.Vector3();
 
 export function CameraRig() {
   const controls = useRef<OrbitControlsImpl>(null);
+  const isInitialized = useRef(false);
 
-  useFrame(() => {
+  useFrame(({ camera }) => {
     const c = controls.current;
     if (!c) return;
+
     const currentWaypoint = useGameStore.getState().state.currentWaypoint;
     const pos = getWaypointPosition(currentWaypoint);
-    tmpTarget.set(pos.x, pos.y + 0.6, pos.z);
-    c.target.lerp(tmpTarget, 0.05);
+    tmpTarget.set(pos.x, -0.05, pos.z);
+
+    // No primeiro frame, posiciona a câmera diretamente sobre o barco e o lago azul
+    if (!isInitialized.current) {
+      isInitialized.current = true;
+      c.target.copy(tmpTarget);
+      camera.position.set(pos.x + 5.5, pos.y + 6.5, pos.z + 8.5);
+      c.update();
+      return;
+    }
+
+    c.target.lerp(tmpTarget, 0.06);
     c.update();
   });
 
@@ -26,11 +38,11 @@ export function CameraRig() {
       ref={controls}
       makeDefault
       enablePan={false}
-      minDistance={6}
-      maxDistance={35}
-      maxPolarAngle={Math.PI / 2.1}
+      minDistance={3.5}
+      maxDistance={45}
+      maxPolarAngle={Math.PI / 2.15}
       enableDamping
-      dampingFactor={0.06}
+      dampingFactor={0.07}
     />
   );
 }

@@ -12,7 +12,7 @@ Este documento rastreia a evolução das entregas do projeto **Expedição Rio D
   - Progressão de níveis do barco (Canoa -> Bote -> Barco Regional -> Cruzeiro Sustentável)
   - Cobertura de testes unitários com Vitest (`src/engine/__tests__/boat.test.ts`)
 
-- [ ] **#2 feat(data): Rio Doce Cultural Quizzes, Character Profiles & River Waypoints**
+- [x] **#2 feat(data): Rio Doce Cultural Quizzes, Character Profiles & River Waypoints**
   - Catálogo completo com as 10 perguntas culturais/históricas do Rio Doce (`src/data/rioDoceQuestions.ts`)
   - Dados e diálogos dos personagens (Agricultor, Pescador, Artesão Krenak, Guia do PERD) (`src/data/characters.ts`)
   - Topologia do percurso do Rio Doce e marcos fluviais (`src/data/riverLayout.ts`)

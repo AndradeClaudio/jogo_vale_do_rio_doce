@@ -3,6 +3,7 @@ import { BoatToken } from './BoatToken';
 import { CameraRig } from './CameraRig';
 import { CharacterTokens } from './CharacterTokens';
 import { Environment3D } from './Environment3D';
+import { Illustrations3D } from './Illustrations3D';
 import { River3D } from './River3D';
 import { WasteTokens } from './WasteTokens';
 
@@ -16,6 +17,7 @@ export function GameCanvas() {
       <color attach="background" args={['#bae6fd']} />
       <fog attach="fog" args={['#dbeafe', 25, 80]} />
       <Environment3D />
+      <Illustrations3D />
       <River3D />
       <WasteTokens />
       <CharacterTokens />

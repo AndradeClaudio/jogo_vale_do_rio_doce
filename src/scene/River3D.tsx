@@ -12,7 +12,7 @@ function createConcaveRiverBedGeometry(
   curve: THREE.Curve<THREE.Vector3>,
   segments = 160,
   crossSegments = 8,
-  width = 5.0,
+  width = 5.2,
   maxDepth = 0.85,
 ) {
   const positions: number[] = [];
@@ -26,8 +26,8 @@ function createConcaveRiverBedGeometry(
     const perp = new THREE.Vector3(tan.z, 0, -tan.x).normalize();
 
     for (let j = 0; j <= crossSegments; j++) {
-      const s = j / crossSegments; // 0 a 1
-      const factor = (s - 0.5) * 2; // -1 a +1
+      const s = j / crossSegments;
+      const factor = (s - 0.5) * 2;
       const offset = factor * (width / 2);
       // Depressão côncava parabólica: 0 nas margens, -maxDepth no fundo central
       const depth = -maxDepth * (1 - factor * factor);
@@ -63,14 +63,14 @@ function createConcaveRiverBedGeometry(
 }
 
 /**
- * Constrói a lâmina d'água azul límpida preenchendo a calha côncava do rio.
+ * Constrói a lâmina d'água azul forte preenchendo a calha côncava do rio.
  */
 function createBlueWaterGeometry(
   curve: THREE.Curve<THREE.Vector3>,
   segments = 160,
   crossSegments = 6,
-  width = 4.4,
-  waterY = -0.16,
+  width = 4.6,
+  waterY = -0.14,
 ) {
   const positions: number[] = [];
   const uvs: number[] = [];
@@ -86,8 +86,7 @@ function createBlueWaterGeometry(
       const s = j / crossSegments;
       const factor = (s - 0.5) * 2;
       const offset = factor * (width / 2);
-      // Leve afundamento no centro para dar sensação de profundidade azul
-      const depthSag = -0.06 * (1 - factor * factor);
+      const depthSag = -0.05 * (1 - factor * factor);
 
       positions.push(
         pt.x + perp.x * offset,
@@ -121,10 +120,9 @@ function createBlueWaterGeometry(
 
 /**
  * Bacia de lago côncava (esférica para dentro / tigela invertida)
- * com água azul cintilante.
+ * com água azul royal vibrante e reflexiva.
  */
 function ConcaveLake({ x, z, radius, depth }: { x: number; z: number; radius: number; depth: number }) {
-  // Bacia côncava do fundo do lago
   const bowlGeometry = useMemo(() => {
     const positions: number[] = [];
     const indices: number[] = [];
@@ -134,7 +132,6 @@ function ConcaveLake({ x, z, radius, depth }: { x: number; z: number; radius: nu
     for (let r = 0; r <= rings; r++) {
       const normR = r / rings;
       const curRadius = normR * radius;
-      // Parábola côncava: -depth no centro, 0 na borda
       const curY = -depth * (1 - normR * normR);
 
       for (let s = 0; s <= segments; s++) {
@@ -169,29 +166,29 @@ function ConcaveLake({ x, z, radius, depth }: { x: number; z: number; radius: nu
 
   return (
     <group position={[x, 0, z]}>
-      {/* Leito côncavo de areia e pedras */}
+      {/* Leito arenoso côncavo */}
       <mesh geometry={bowlGeometry} receiveShadow>
-        <meshStandardMaterial color="#92400e" roughness={0.9} />
+        <meshStandardMaterial color="#b45309" roughness={0.85} />
       </mesh>
 
-      {/* Espelho d'água azul vivo do lago */}
-      <mesh position={[0, -0.14, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[radius * 0.95, 36]} />
+      {/* Espelho d'água azul royal forte e vibrante */}
+      <mesh position={[0, -0.12, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[radius * 0.96, 36]} />
         <meshStandardMaterial
-          color="#0284c7"
-          emissive="#0369a1"
-          emissiveIntensity={0.3}
-          roughness={0.06}
+          color="#1d4ed8"
+          emissive="#1e3a8a"
+          emissiveIntensity={0.4}
+          roughness={0.05}
           metalness={0.15}
           transparent
-          opacity={0.92}
+          opacity={0.94}
         />
       </mesh>
     </group>
   );
 }
 
-/** Deck de madeira rústico no atracadouro de cada waypoint. */
+/** Deck de madeira nos atracadouros com luminária e poste. */
 function Dock({ index }: { index: number }) {
   const pos = getWaypointPosition(index);
   const tan = getWaypointTangent(index);
@@ -201,28 +198,29 @@ function Dock({ index }: { index: number }) {
 
   return (
     <group position={[dockPos.x, 0.05, dockPos.z]} rotation={[0, rotY, 0]}>
-      {/* Pranchas do pier */}
+      {/* Taboado do cais */}
       <mesh castShadow receiveShadow position={[0, 0.02, 0]}>
-        <boxGeometry args={[1.4, 0.08, 1.0]} />
-        <meshStandardMaterial color="#78350f" roughness={0.8} />
+        <boxGeometry args={[1.5, 0.1, 1.1]} />
+        <meshStandardMaterial color="#78350f" roughness={0.7} />
       </mesh>
-      {/* Pilares no solo */}
-      <mesh position={[-0.55, -0.25, -0.4]}>
-        <cylinderGeometry args={[0.06, 0.06, 0.6, 8]} />
+      {/* Pilares */}
+      <mesh position={[-0.6, -0.25, -0.45]}>
+        <cylinderGeometry args={[0.07, 0.07, 0.6, 8]} />
         <meshStandardMaterial color="#451a03" />
       </mesh>
-      <mesh position={[0.55, -0.25, -0.4]}>
-        <cylinderGeometry args={[0.06, 0.06, 0.6, 8]} />
+      <mesh position={[0.6, -0.25, -0.45]}>
+        <cylinderGeometry args={[0.07, 0.07, 0.6, 8]} />
         <meshStandardMaterial color="#451a03" />
       </mesh>
-      {/* Lampião de atracamento */}
-      <mesh position={[0.55, 0.45, 0.35]}>
-        <cylinderGeometry args={[0.03, 0.03, 0.8, 8]} />
-        <meshStandardMaterial color="#b45309" />
+      {/* Poste do lampião */}
+      <mesh position={[0.6, 0.5, 0.4]}>
+        <cylinderGeometry args={[0.035, 0.035, 0.9, 8]} />
+        <meshStandardMaterial color="#92400e" />
       </mesh>
-      <mesh position={[0.55, 0.88, 0.35]}>
-        <sphereGeometry args={[0.09, 10, 10]} />
-        <meshStandardMaterial color="#fef08a" emissive="#f59e0b" emissiveIntensity={0.8} />
+      {/* Luminária quente acolhedora */}
+      <mesh position={[0.6, 0.98, 0.4]}>
+        <sphereGeometry args={[0.1, 12, 10]} />
+        <meshStandardMaterial color="#fef08a" emissive="#f59e0b" emissiveIntensity={0.9} />
       </mesh>
     </group>
   );
@@ -234,50 +232,50 @@ export function River3D() {
   }, []);
 
   const waterGeometry = useMemo(() => {
-    return createBlueWaterGeometry(RIVER_CURVE, 160, 6, 4.5, -0.15);
+    return createBlueWaterGeometry(RIVER_CURVE, 160, 6, 4.6, -0.13);
   }, []);
 
   const waterMaterialRef = useRef<THREE.MeshStandardMaterial>(null);
 
-  // Leve ondulação na água azul com o tempo
+  // Animação sutil do brilho azul das águas
   useFrame(({ clock }) => {
     if (waterMaterialRef.current) {
-      const wave = Math.sin(clock.elapsedTime * 1.5) * 0.05;
-      waterMaterialRef.current.emissiveIntensity = 0.25 + wave;
+      const shimmer = Math.sin(clock.elapsedTime * 2) * 0.06;
+      waterMaterialRef.current.emissiveIntensity = 0.38 + shimmer;
     }
   });
 
   return (
     <group>
-      {/* 1. Leito do Rio Côncavo (esférico/curvado para dentro do terreno) */}
+      {/* 1. Leito do Rio Côncavo (curvado para dentro do terreno) */}
       <mesh geometry={riverBedGeometry} receiveShadow>
-        <meshStandardMaterial color="#a16207" roughness={0.9} />
+        <meshStandardMaterial color="#b45309" roughness={0.85} />
       </mesh>
 
-      {/* 2. Água Azul Brilhante do Rio Doce */}
+      {/* 2. Água com Azul Royal Mais Forte e Marcante */}
       <mesh geometry={waterGeometry}>
         <meshStandardMaterial
           ref={waterMaterialRef}
-          color="#0284c7"
-          emissive="#0369a1"
-          emissiveIntensity={0.25}
-          roughness={0.06}
-          metalness={0.15}
+          color="#1d4ed8" // Azul mais forte e marcante (Royal Blue)
+          emissive="#1e3a8a" // Emissividade azul profunda
+          emissiveIntensity={0.38}
+          roughness={0.04}
+          metalness={0.18}
           transparent
-          opacity={0.9}
+          opacity={0.94}
         />
       </mesh>
 
-      {/* 3. Bacia de Lago Côncava em Mariana (Nascentes) */}
-      <ConcaveLake x={-18} z={14} radius={5.5} depth={0.9} />
+      {/* 3. Bacia de Lago Côncava em Mariana */}
+      <ConcaveLake x={-18} z={14} radius={5.8} depth={0.9} />
 
-      {/* 4. Grande Bacia de Lago Côncava no Parque Estadual do Rio Doce (Lagoas do PERD) */}
-      <ConcaveLake x={-5.5} z={-3} radius={6.5} depth={1.0} />
+      {/* 4. Grande Bacia de Lago Côncava no PERD */}
+      <ConcaveLake x={-5.5} z={-3} radius={6.8} depth={1.0} />
 
       {/* 5. Grande Lago / Foz do Rio Doce */}
-      <ConcaveLake x={16.5} z={-12.5} radius={6.0} depth={0.9} />
+      <ConcaveLake x={16.5} z={-12.5} radius={6.2} depth={0.9} />
 
-      {/* 6. Píers de atracamento em cada marco */}
+      {/* 6. Píers de atracamento */}
       {RIVER_WAYPOINTS.map((wp) => (
         <Dock key={wp.index} index={wp.index} />
       ))}

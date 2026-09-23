@@ -19,8 +19,10 @@ body,
 
 .game-root {
   position: relative;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
+  /* dvh = área realmente visível no celular (sem a barra do navegador) */
+  height: 100dvh;
   overflow: hidden;
 }
 

@@ -29,6 +29,7 @@
   flex-direction: column;
   gap: 0.9rem;
   max-height: 90vh;
+  max-height: 90dvh;
   overflow-y: auto;
   border: 1px solid var(--color-painel-borda);
 }
@@ -404,6 +405,7 @@
     padding: 1.1rem;
     gap: 0.7rem;
     max-height: 94vh;
+    max-height: 94dvh;
     border-radius: var(--raio-borda-medio);
   }
 
@@ -456,5 +458,33 @@
     font-size: 1rem;
     padding: 0.75rem 1.5rem;
     width: 100%;
+  }
+}
+
+/* Celulares baixos: abertura compacta para os botões caberem sem rolar */
+@media (max-height: 720px) {
+  .story-illustration {
+    font-size: 2.2rem;
+    padding: 0.5rem 0;
+  }
+
+  .story-text {
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+
+  .avatar-card {
+    padding: 0.5rem 0.4rem;
+    gap: 0.3rem;
+  }
+
+  .avatar-card svg {
+    max-width: 78px;
+  }
+
+  .intro-rules {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    padding: 0.6rem 0.7rem;
   }
 }

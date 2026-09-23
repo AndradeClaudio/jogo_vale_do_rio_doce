@@ -273,6 +273,7 @@
 @media (max-width: 680px) {
   .hud-container {
     padding: 0.6rem;
+    padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
     gap: 0.6rem;
   }
 

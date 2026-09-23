@@ -15,6 +15,23 @@ describe('Game Reducer & Event Flow', () => {
     expect(state.boat.cracks).toBe(0);
   });
 
+  it('guarda o personagem escolhido na largada e o mantém ao reiniciar', () => {
+    let state = createInitialState(123);
+    state = gameReducer(state, { type: 'START_GAME', avatar: 'menino' });
+    expect(state.avatar).toBe('menino');
+    expect(state.log.at(-1)).toContain('O navegador');
+
+    state = gameReducer(state, { type: 'RESTART_GAME' });
+    expect(state.avatar).toBe('menino');
+    expect(state.phase).toBe('navigating');
+  });
+
+  it('usa a navegadora quando nenhum personagem é informado', () => {
+    const state = gameReducer(createInitialState(123), { type: 'START_GAME' });
+    expect(state.avatar).toBe('menina');
+    expect(state.log.at(-1)).toContain('A navegadora');
+  });
+
   it('avalia o encontro com dejeto no waypoint 1 e coleta com sucesso', () => {
     let state = createInitialState(123);
     state = gameReducer(state, { type: 'START_GAME' });

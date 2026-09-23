@@ -1,4 +1,4 @@
-import { GameCanvas } from './scene/GameCanvas';
+import { PixiCanvas } from './scene/PixiCanvas';
 import { GameOverModal } from './ui/GameOverModal';
 import { HUD } from './ui/HUD';
 import { QuizModal } from './ui/QuizModal';
@@ -9,8 +9,8 @@ import { WasteCleaningModal } from './ui/WasteCleaningModal';
 export default function App() {
   return (
     <div className="game-root">
-      {/* Cena Tridimensional Three.js / R3F */}
-      <GameCanvas />
+      {/* Cena 2D vetorial (Pixi.js) */}
+      <PixiCanvas />
 
       {/* Interface HUD 2D */}
       <HUD />

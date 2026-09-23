@@ -6,10 +6,11 @@ import {
 import { getQuestionByWaypoint } from '../data/rioDoceQuestions';
 import { applyHullDamage, applyHullRepairOrUpgrade, createInitialBoat } from './boat';
 import { cleanWasteItem } from './waste';
-import type { GameAction, GameState } from './types';
+import type { Avatar, GameAction, GameState } from './types';
 
-export function createInitialState(seed = 20260922): GameState {
+export function createInitialState(seed = 20260922, avatar: Avatar = 'menina'): GameState {
   return {
+    avatar,
     currentWaypoint: 0,
     targetWaypoint: 0,
     boat: createInitialBoat(),
@@ -28,7 +29,7 @@ export function createInitialState(seed = 20260922): GameState {
     lastChoiceIndex: null,
     lastUpgradeMessage: null,
     log: [
-      '🚢 Bem-vindo à Expedição Rio Doce!',
+      '🚢 Boas-vindas à Expedição Rio Doce!',
       'Navegue de Mariana até a foz, retire os lixos e responda aos saberes dos ribeirinhos.',
     ],
     seed,
@@ -45,14 +46,16 @@ function addLog(draft: GameState, message: string): void {
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
   if (action.type === 'START_GAME') {
-    const fresh = createInitialState(action.seed ?? state.seed);
+    const avatar = action.avatar ?? state.avatar;
+    const fresh = createInitialState(action.seed ?? state.seed, avatar);
     fresh.phase = 'navigating';
-    addLog(fresh, '⚓ A embarcação soltou as amarras nas nascentes de Mariana. Boa viagem!');
+    const quem = avatar === 'menina' ? 'A navegadora' : 'O navegador';
+    addLog(fresh, `⚓ ${quem} soltou as amarras nas nascentes de Mariana. Boa viagem!`);
     return fresh;
   }
 
   if (action.type === 'RESTART_GAME') {
-    const fresh = createInitialState(state.seed + 1);
+    const fresh = createInitialState(state.seed + 1, state.avatar);
     fresh.phase = 'navigating';
     addLog(fresh, '🔄 Nova expedição iniciada no Rio Doce!');
     return fresh;

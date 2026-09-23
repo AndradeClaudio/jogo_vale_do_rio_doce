@@ -80,7 +80,11 @@ export interface PlayerScore {
   upgradesRealizados: number;
 }
 
+/** Quem conduz o barco, escolhido pelo jogador antes da largada. */
+export type Avatar = 'menina' | 'menino';
+
 export interface GameState {
+  avatar: Avatar;
   currentWaypoint: number;
   targetWaypoint: number;
   boat: BoatState;
@@ -97,7 +101,7 @@ export interface GameState {
 }
 
 export type GameAction =
-  | { type: 'START_GAME'; seed?: number }
+  | { type: 'START_GAME'; seed?: number; avatar?: Avatar }
   | { type: 'ADVANCE_RIVER' }
   | { type: 'COLLECT_WASTE' }
   | { type: 'ANSWER_QUIZ'; choiceIndex: number }

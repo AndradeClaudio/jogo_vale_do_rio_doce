@@ -7,6 +7,7 @@ import { useGameStore } from '../store/gameStore';
 import { getWaypointPosition } from './pathUtils';
 
 const tmpTarget = new THREE.Vector3();
+const tmpDelta = new THREE.Vector3();
 
 export function CameraRig() {
   const controls = useRef<OrbitControlsImpl>(null);
@@ -29,7 +30,11 @@ export function CameraRig() {
       return;
     }
 
-    c.target.lerp(tmpTarget, 0.06);
+    // Move o alvo E a câmera juntos, preservando o zoom/ângulo escolhido pelo
+    // jogador, para a embarcação nunca "fugir" do enquadramento conforme navega.
+    tmpDelta.subVectors(tmpTarget, c.target).multiplyScalar(0.06);
+    c.target.add(tmpDelta);
+    camera.position.add(tmpDelta);
     c.update();
   });
 

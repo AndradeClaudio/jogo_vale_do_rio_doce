@@ -27,9 +27,11 @@ export function QuizModal() {
           </div>
         </div>
 
-        <div className="character-intro">
-          "{character.introducao}"
-        </div>
+        {!hasAnswered && (
+          <div className="character-intro">
+            "{character.introducao}"
+          </div>
+        )}
 
         {/* Pergunta Pedagógica */}
         <div className="quiz-question-box">

@@ -268,3 +268,88 @@
   border: 1px solid var(--color-painel-borda);
   box-shadow: var(--sombra-card);
 }
+
+/* ---------- Responsivo (celulares e telas estreitas) ---------- */
+@media (max-width: 680px) {
+  .hud-container {
+    padding: 0.6rem;
+    gap: 0.6rem;
+  }
+
+  .hud-top {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .hud-card {
+    padding: 0.65rem 0.85rem;
+  }
+
+  .boat-status-card {
+    min-width: 0;
+    width: 100%;
+    gap: 0.45rem;
+  }
+
+  .boat-tier-title {
+    font-size: 0.9rem;
+  }
+
+  .boat-tier-pill {
+    font-size: 0.68rem;
+    padding: 0.15rem 0.5rem;
+  }
+
+  .cracks-label-row {
+    font-size: 0.72rem;
+  }
+
+  .crack-slot {
+    height: 18px;
+    font-size: 0.65rem;
+  }
+
+  .progress-text {
+    font-size: 0.68rem;
+  }
+
+  .stats-card {
+    justify-content: space-between;
+    gap: 0.4rem;
+    width: 100%;
+  }
+
+  .stat-label {
+    font-size: 0.62rem;
+  }
+
+  .stat-value {
+    font-size: 1rem;
+  }
+
+  .btn-advance {
+    font-size: 0.95rem;
+    padding: 0.75rem 1.4rem;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .log-toast {
+    max-width: 100%;
+    font-size: 0.78rem;
+  }
+
+  .waste-interactive-banner {
+    font-size: 0.8rem;
+    padding: 0.6rem 1rem !important;
+    white-space: normal;
+    text-align: left;
+    max-width: calc(100vw - 1.2rem);
+  }
+
+  .btn-tap-clean-3d {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+  }
+}

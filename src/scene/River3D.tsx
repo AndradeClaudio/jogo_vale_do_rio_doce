@@ -1,8 +1,53 @@
-import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { useMemo } from 'react';
 import * as THREE from 'three';
+import { Water } from 'three-stdlib';
 import { RIVER_WAYPOINTS } from '../data/riverLayout';
-import { RIVER_CURVE, getWaypointPosition, getWaypointTangent } from './pathUtils';
+import { RIVER_CURVE, SUN_POSITION, getWaypointPosition, getWaypointTangent } from './pathUtils';
+
+/** Bacias de lago ao longo do percurso, compartilhadas com o relevo do terreno. */
+export const LAKES: { x: number; z: number; radius: number; depth: number }[] = [
+  { x: -18, z: 14, radius: 5.8, depth: 0.9 },
+  { x: -5.5, z: -3, radius: 6.8, depth: 1.0 },
+  { x: 16.5, z: -12.5, radius: 6.2, depth: 0.9 },
+];
+
+/**
+ * Textura de normais gerada em runtime (sem assets externos) para alimentar
+ * o shader de água (three-stdlib Water), que já compõe 4 amostras dela em
+ * escalas/deslocamentos diferentes para simular ondulação orgânica.
+ */
+function createWaterNormalTexture() {
+  const size = 256;
+  const data = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const i = (y * size + x) * 4;
+      const nx =
+        Math.sin(x * 0.25) * Math.cos(y * 0.18) * 0.6 +
+        Math.sin(x * 0.07 + y * 0.11) * 0.4;
+      const ny =
+        Math.cos(x * 0.16 + 1.7) * Math.sin(y * 0.23) * 0.6 +
+        Math.cos(x * 0.045 - y * 0.09) * 0.4;
+      const len = Math.sqrt(nx * nx + ny * ny + 1);
+      data[i] = ((nx / len) * 0.5 + 0.5) * 255;
+      data[i + 1] = ((ny / len) * 0.5 + 0.5) * 255;
+      data[i + 2] = (1 / len) * 0.5 * 255 + 128;
+      data[i + 3] = 255;
+    }
+  }
+  const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.needsUpdate = true;
+  return texture;
+}
+
+/**
+ * Direção do sol usada pelo brilho especular da água, normalizada a partir
+ * da mesma posição do sol do céu (Sky) e da luz direcional da cena.
+ */
+const WATER_SUN_DIRECTION = new THREE.Vector3(...SUN_POSITION).normalize();
 
 /**
  * Constrói a geometria de um leito fluvial côncavo (esférico/curvado para dentro),
@@ -63,14 +108,19 @@ function createConcaveRiverBedGeometry(
 }
 
 /**
- * Constrói a lâmina d'água azul forte preenchendo a calha côncava do rio.
+ * Constrói a geometria da lâmina d'água do rio em ESPAÇO LOCAL DO PLANO
+ * (x local = x mundo, y local = -z mundo, z local = 0), a convenção exigida
+ * pelo shader de reflexo do three-stdlib Water (que assume a normal ao longo
+ * do eixo Z local e espera que o mesh seja rotacionado -90° em X para alinhar
+ * essa normal ao "para cima" do mundo). Como o rio é uma faixa sinuosa (não um
+ * retângulo), construímos sua planta 2D nesse espaço local em vez de usar
+ * PlaneGeometry.
  */
-function createBlueWaterGeometry(
+function createRiverWaterLocalGeometry(
   curve: THREE.Curve<THREE.Vector3>,
   segments = 160,
   crossSegments = 6,
   width = 4.6,
-  waterY = -0.14,
 ) {
   const positions: number[] = [];
   const uvs: number[] = [];
@@ -86,13 +136,10 @@ function createBlueWaterGeometry(
       const s = j / crossSegments;
       const factor = (s - 0.5) * 2;
       const offset = factor * (width / 2);
-      const depthSag = -0.05 * (1 - factor * factor);
+      const worldX = pt.x + perp.x * offset;
+      const worldZ = pt.z + perp.z * offset;
 
-      positions.push(
-        pt.x + perp.x * offset,
-        waterY + depthSag,
-        pt.z + perp.z * offset,
-      );
+      positions.push(worldX, -worldZ, 0);
       uvs.push(s, t * 16);
     }
   }
@@ -122,7 +169,19 @@ function createBlueWaterGeometry(
  * Bacia de lago côncava (esférica para dentro / tigela invertida)
  * com água azul royal vibrante e reflexiva.
  */
-function ConcaveLake({ x, z, radius, depth }: { x: number; z: number; radius: number; depth: number }) {
+function ConcaveLake({
+  x,
+  z,
+  radius,
+  depth,
+  normalMap,
+}: {
+  x: number;
+  z: number;
+  radius: number;
+  depth: number;
+  normalMap: THREE.Texture;
+}) {
   const bowlGeometry = useMemo(() => {
     const positions: number[] = [];
     const indices: number[] = [];
@@ -164,6 +223,26 @@ function ConcaveLake({ x, z, radius, depth }: { x: number; z: number; radius: nu
     return geom;
   }, [radius, depth]);
 
+  const water = useMemo(() => {
+    const w = new Water(new THREE.CircleGeometry(radius * 0.96, 40), {
+      textureWidth: 256,
+      textureHeight: 256,
+      waterNormals: normalMap,
+      sunDirection: WATER_SUN_DIRECTION,
+      sunColor: '#fff4d9',
+      waterColor: '#04101f',
+      distortionScale: 1.6,
+      alpha: 1,
+      fog: true,
+    });
+    w.material.uniforms.size.value = 1.4;
+    return w;
+  }, [radius, normalMap]);
+
+  useFrame((_, delta) => {
+    water.material.uniforms.time.value += delta * 0.5;
+  });
+
   return (
     <group position={[x, 0, z]}>
       {/* Leito arenoso côncavo */}
@@ -171,19 +250,8 @@ function ConcaveLake({ x, z, radius, depth }: { x: number; z: number; radius: nu
         <meshStandardMaterial color="#574438" roughness={0.9} />
       </mesh>
 
-      {/* Espelho d'água azul royal forte e vibrante */}
-      <mesh position={[0, -0.12, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[radius * 0.96, 36]} />
-        <meshStandardMaterial
-          color="#0a192f"
-          emissive="#040d1a"
-          emissiveIntensity={0.25}
-          roughness={0.04}
-          metalness={0.2}
-          transparent
-          opacity={0.97}
-        />
-      </mesh>
+      {/* Espelho d'água calmo, com ondulações, reflexo real e brilho de sol */}
+      <primitive object={water} position={[0, -0.12, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow />
     </group>
   );
 }
@@ -231,49 +299,51 @@ export function River3D() {
     return createConcaveRiverBedGeometry(RIVER_CURVE, 160, 8, 5.2, 0.85);
   }, []);
 
-  const waterGeometry = useMemo(() => {
-    return createBlueWaterGeometry(RIVER_CURVE, 160, 6, 4.6, -0.13);
+  const riverWaterGeometry = useMemo(() => {
+    return createRiverWaterLocalGeometry(RIVER_CURVE, 160, 6, 4.6);
   }, []);
 
-  const waterMaterialRef = useRef<THREE.MeshStandardMaterial>(null);
+  const normalMap = useMemo(() => createWaterNormalTexture(), []);
 
-  // Animação sutil do brilho azul das águas
-  useFrame(({ clock }) => {
-    if (waterMaterialRef.current) {
-      const shimmer = Math.sin(clock.elapsedTime * 2) * 0.06;
-      waterMaterialRef.current.emissiveIntensity = 0.38 + shimmer;
-    }
+  const riverWater = useMemo(() => {
+    const w = new Water(riverWaterGeometry, {
+      textureWidth: 256,
+      textureHeight: 256,
+      waterNormals: normalMap,
+      sunDirection: WATER_SUN_DIRECTION,
+      sunColor: '#fff4d9',
+      waterColor: '#04101f',
+      distortionScale: 2,
+      alpha: 1,
+      fog: true,
+    });
+    w.material.uniforms.size.value = 1.8;
+    return w;
+  }, [riverWaterGeometry, normalMap]);
+
+  // Fluxo contínuo das águas do rio
+  useFrame((_, delta) => {
+    riverWater.material.uniforms.time.value += delta * 0.65;
   });
 
   return (
     <group>
       {/* 1. Leito do Rio Côncavo (curvado para dentro do terreno) */}
       <mesh geometry={riverBedGeometry} receiveShadow>
-        <meshStandardMaterial color="#574438" roughness={0.9} />
+        <meshStandardMaterial color="#4a3728" roughness={0.95} />
       </mesh>
 
-      {/* 2. Água com Azul Royal Mais Forte e Marcante */}
-      <mesh geometry={waterGeometry}>
-        <meshStandardMaterial
-          ref={waterMaterialRef}
-          color="#0a192f" // Azul muito escuro (Dark Navy / Midnight Blue)
-          emissive="#040d1a" // Emissividade sutil azul muito escura
-          emissiveIntensity={0.25}
-          roughness={0.04}
-          metalness={0.2}
-          transparent
-          opacity={0.97}
-        />
-      </mesh>
+      {/* 2. Água do rio: ondulações animadas, reflexo real do ambiente e brilho de sol */}
+      <primitive object={riverWater} position={[0, -0.13, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow />
 
       {/* 3. Bacia de Lago Côncava em Mariana */}
-      <ConcaveLake x={-18} z={14} radius={5.8} depth={0.9} />
+      <ConcaveLake x={LAKES[0].x} z={LAKES[0].z} radius={LAKES[0].radius} depth={LAKES[0].depth} normalMap={normalMap} />
 
       {/* 4. Grande Bacia de Lago Côncava no PERD */}
-      <ConcaveLake x={-5.5} z={-3} radius={6.8} depth={1.0} />
+      <ConcaveLake x={LAKES[1].x} z={LAKES[1].z} radius={LAKES[1].radius} depth={LAKES[1].depth} normalMap={normalMap} />
 
       {/* 5. Grande Lago / Foz do Rio Doce */}
-      <ConcaveLake x={16.5} z={-12.5} radius={6.2} depth={0.9} />
+      <ConcaveLake x={LAKES[2].x} z={LAKES[2].z} radius={LAKES[2].radius} depth={LAKES[2].depth} normalMap={normalMap} />
 
       {/* 6. Píers de atracamento */}
       {RIVER_WAYPOINTS.map((wp) => (

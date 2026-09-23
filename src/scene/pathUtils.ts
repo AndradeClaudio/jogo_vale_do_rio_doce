@@ -23,6 +23,9 @@ const CONTROL_POINTS: THREE.Vector3[] = [
 
 export const RIVER_CURVE = new THREE.CatmullRomCurve3(CONTROL_POINTS, false, 'centripetal');
 
+// Direção do sol compartilhada pelo céu (Sky) e pela luz direcional da cena
+export const SUN_POSITION: [number, number, number] = [55, 42, 18];
+
 export const WAYPOINT_POSITIONS: THREE.Vector3[] = Array.from(
   { length: MAX_WAYPOINT_INDEX + 1 },
   (_, i) => RIVER_CURVE.getPointAt(i / MAX_WAYPOINT_INDEX),

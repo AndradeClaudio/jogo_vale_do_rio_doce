@@ -1,6 +1,8 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { LAKES } from './River3D';
+import { RIVER_CURVE } from './pathUtils';
 
 // ---------- Casinhas Coloniais Tradicionais de Minas Gerais ----------
 
@@ -163,11 +165,65 @@ const VILLAGE_HOUSES: HouseProps[] = [
   { x: 19, z: -15, rotation: 0.6, wallColor: '#fef08a', doorColor: '#b45309' },
 ];
 
+const RIVER_SAMPLES_FOR_LAND = Array.from({ length: 49 }, (_, i) => RIVER_CURVE.getPointAt(i / 48));
+const RIVER_HALF_WIDTH = 2.8;
+const LAND_SAFETY_MARGIN = 2.2;
+
+/**
+ * Empurra um ponto (x, z) para fora d'água caso caia dentro de um lago ou do
+ * canal do rio, preservando a direção original a partir do centro/curva mais
+ * próxima. As casinhas são posicionadas "a olho" perto dos vilarejos e podem
+ * cair dentro do círculo de um lago; isso garante que fiquem sempre em terra.
+ */
+function keepOnDryLand(x: number, z: number): [number, number] {
+  let px = x;
+  let pz = z;
+
+  for (const lake of LAKES) {
+    const dx = px - lake.x;
+    const dz = pz - lake.z;
+    const dist = Math.sqrt(dx * dx + dz * dz);
+    const safeDist = lake.radius + LAND_SAFETY_MARGIN;
+    if (dist < safeDist) {
+      const angle = dist > 0.001 ? Math.atan2(dz, dx) : 0;
+      px = lake.x + Math.cos(angle) * safeDist;
+      pz = lake.z + Math.sin(angle) * safeDist;
+    }
+  }
+
+  let minDist = Infinity;
+  let nearest = RIVER_SAMPLES_FOR_LAND[0];
+  for (const p of RIVER_SAMPLES_FOR_LAND) {
+    const dx = px - p.x;
+    const dz = pz - p.z;
+    const d = Math.sqrt(dx * dx + dz * dz);
+    if (d < minDist) {
+      minDist = d;
+      nearest = p;
+    }
+  }
+  const safeRiverDist = RIVER_HALF_WIDTH + LAND_SAFETY_MARGIN;
+  if (minDist < safeRiverDist) {
+    const dx = px - nearest.x;
+    const dz = pz - nearest.z;
+    const angle = minDist > 0.001 ? Math.atan2(dz, dx) : 0;
+    px = nearest.x + Math.cos(angle) * safeRiverDist;
+    pz = nearest.z + Math.sin(angle) * safeRiverDist;
+  }
+
+  return [px, pz];
+}
+
+const SAFE_VILLAGE_HOUSES: HouseProps[] = VILLAGE_HOUSES.map((house) => {
+  const [x, z] = keepOnDryLand(house.x, house.z);
+  return { ...house, x, z };
+});
+
 export function Illustrations3D() {
   return (
     <group>
-      {/* 1. Casinhas Coloniais Ilustradas de Minas Gerais */}
-      {VILLAGE_HOUSES.map((house, i) => (
+      {/* 1. Casinhas Coloniais Ilustradas de Minas Gerais (sempre em terra firme) */}
+      {SAFE_VILLAGE_HOUSES.map((house, i) => (
         <ColonialHouse key={`house_${i}`} {...house} />
       ))}
 

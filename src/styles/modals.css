@@ -24,10 +24,10 @@
   background: #ffffff;
   border-radius: var(--raio-borda-grande);
   box-shadow: var(--sombra-modal);
-  padding: 1.8rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 0.9rem;
   max-height: 90vh;
   overflow-y: auto;
   border: 1px solid var(--color-painel-borda);
@@ -227,4 +227,69 @@
 
 .btn-restart:hover {
   transform: translateY(-2px);
+}
+
+/* ---------- Responsivo (celulares e telas estreitas) ---------- */
+@media (max-width: 680px) {
+  .modal-backdrop {
+    padding: 0.7rem;
+  }
+
+  .modal-window {
+    padding: 1.1rem;
+    gap: 0.7rem;
+    max-height: 94vh;
+    border-radius: var(--raio-borda-medio);
+  }
+
+  .character-header {
+    gap: 0.7rem;
+  }
+
+  .character-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 2rem;
+  }
+
+  .character-info h3 {
+    font-size: 1.05rem;
+  }
+
+  .character-info p {
+    font-size: 0.78rem;
+  }
+
+  .character-intro {
+    font-size: 0.85rem;
+    padding: 0.65rem;
+  }
+
+  .quiz-question-title {
+    font-size: 1rem;
+  }
+
+  .choice-btn {
+    padding: 0.7rem 0.9rem;
+    font-size: 0.92rem;
+    gap: 0.6rem;
+  }
+
+  .feedback-box {
+    padding: 0.8rem;
+    font-size: 0.88rem;
+  }
+
+  .waste-icon-large {
+    width: 70px;
+    height: 70px;
+    font-size: 2.6rem;
+  }
+
+  .btn-clean,
+  .btn-restart {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    width: 100%;
+  }
 }
